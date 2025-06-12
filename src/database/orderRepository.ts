@@ -3,9 +3,9 @@ import db from './clientPool'
 import { loadSqlQuery } from './sqlLoader';
 
 class OrderRepository {
-    async createOrder(data: any, receivedAt: number): Promise<Order> {
+    async createOrder(data: any): Promise<Order> {
         try {
-            const result = await db.query(loadSqlQuery('createNewOrders.sql'), [data, receivedAt]);
+            const result = await db.query(loadSqlQuery('createNewOrders.sql'), [data]);
             return result.rows[0];
         } catch (error) {
             throw error;

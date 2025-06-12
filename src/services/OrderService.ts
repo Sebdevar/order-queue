@@ -8,8 +8,8 @@ class OrderService {
         this.orderRepository = orderRepository;
     }
 
-    async createOrder(data: Order, receivedAt: number): Promise<Order> {
-        return await this.orderRepository.createOrder(data, receivedAt)
+    async createOrder(data: Order): Promise<Order> {
+        return await this.orderRepository.createOrder(data)
     }
 
     async processOrder(orderId: number): Promise<Order> {
@@ -26,3 +26,5 @@ class OrderService {
         }
     }
 }
+
+export default OrderService;
