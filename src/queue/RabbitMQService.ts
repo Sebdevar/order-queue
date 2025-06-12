@@ -1,0 +1,79 @@
+import amqp, { Channel, ChannelModel } from 'amqplib';
+
+class RabbitMQService {
+    private connection: ChannelModel | null = null;
+    private channel: Channel | null = null;
+    private readonly url: string;
+    private readonly queueName: string;
+
+    constructor(url: string, queueName: string) {
+        this.url = url;
+        this.queueName = queueName;
+    }
+
+    async connect(): Promise<void> {
+        try {
+            this.connection = await amqp.connect(this.url);
+            this.channel = await this.connection.createChannel();
+
+            await this.channel.assertQueue(this.queueName, {
+                durable: true
+            });
+
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async publishOrder(orderData: any): Promise<boolean> {
+        if (!this.channel) {
+            throw new Error('RabbitMQ channel is not established');
+        }
+
+        try {
+            const message = Buffer.from(JSON.stringify(orderData));
+            return this.channel.sendToQueue(this.queueName, message, {
+                persistent: true
+            });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async consumeOrders(callback: (orderData: any) => Promise<void>): Promise<void> {
+        if (!this.channel) {
+            throw new Error('RabbitMQ channel is not established');
+        }
+
+        try {
+            await this.channel.consume(this.queueName, async (msg: any) => {
+                if (msg) {
+                    const orderData = JSON.parse(msg.content.toString());
+                    try {
+                        await callback(orderData);
+                        this.channel?.ack(msg);
+                    } catch (error) {
+                        this.channel?.nack(msg, false, true);
+                    }
+                }
+            });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async close(): Promise<void> {
+        try {
+            if (this.channel) {
+                await this.channel.close();
+            }
+            if (this.connection) {
+                await this.connection.close();
+            }
+        } catch (error) {
+            throw error;
+        }
+    }
+}
+
+export default RabbitMQService;

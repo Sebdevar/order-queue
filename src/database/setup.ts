@@ -2,7 +2,7 @@
 import db from 'database/clientPool';
 import { loadSqlSchema } from './sqlLoader';
 
-export const setupDatabase = async () => {
+const setupDatabase = async () => {
     try {
         await db.query(loadSqlSchema('type__order_status.sql'));
         await db.query(loadSqlSchema('table__orders.sql'));
@@ -10,3 +10,5 @@ export const setupDatabase = async () => {
         throw error;
     }
 }
+
+export default setupDatabase;
