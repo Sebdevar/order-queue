@@ -1,8 +1,9 @@
-import db from 'database/clientPool'
+import { Order, OrderStatus } from '../models/orders';
+import db from './clientPool'
 import { loadSqlQuery } from './sqlLoader';
 
 class OrderRepository {
-    async createOrder(data: any, receivedAt: Date) {
+    async createOrder(data: any, receivedAt: number): Promise<Order> {
         try {
             const result = await db.query(loadSqlQuery('createNewOrders.sql'), [data, receivedAt]);
             return result.rows[0];
@@ -10,4 +11,24 @@ class OrderRepository {
             throw error;
         }
     }
+
+    async getOrderById(orderId: number): Promise<Order> {
+        try {
+            const result = await db.query(loadSqlQuery('getOrderById.sql'), [orderId]);
+            return result.rows[0]
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async updateOrderStatus(orderId: number, status: OrderStatus): Promise<Order> {
+        try {
+            const result = await db.query(loadSqlQuery('updateOrderById.sql'), [orderId, status]);
+            return result.rows[0]
+        } catch (error) {
+            throw error;
+        }
+    }
 }
+
+export default OrderRepository;
