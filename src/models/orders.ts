@@ -1,7 +1,7 @@
 export enum OrderStatus {
     RECEIVED = 'received',
     PROCESSING = 'processing',
-    PROCESSED = 'processed'
+    COMPLETED = 'completed'
 }
 
 export interface Order {
@@ -10,6 +10,6 @@ export interface Order {
     status: OrderStatus;
 
     received_at?: Date;
-    processed_at?: Date;
+    completed_at?: Date;
     notification_sent?: boolean;
 }
