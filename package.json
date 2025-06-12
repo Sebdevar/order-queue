@@ -12,7 +12,7 @@
   },
   "license": "ISC",
   "author": "Sebastien De Varennes",
-  "type": "typescript",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "test": "test"
