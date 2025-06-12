@@ -1,13 +1,12 @@
-import config from 'configuration/config';
-import OrderRepository from 'database/orderRepository';
-import setupDatabase from 'database/setup';
-import db from 'database/clientPool';
 import express from "express";
-import * as process from 'node:process';
-import RabbitMQService from 'services/RabbitMQService';
-import OrderService from 'services/OrderService';
-import OrderController from 'api/OrderController';
+import OrderController from './api/OrderController';
+import config from './configuration/config';
+import db from './database/clientPool';
+import OrderRepository from './database/orderRepository';
+import setupDatabase from './database/setup';
 import NotificationService from './services/NotificationService';
+import OrderService from './services/OrderService';
+import RabbitMQService from './services/RabbitMQService';
 
 async function bootstrap() {
     try {
@@ -34,18 +33,19 @@ async function bootstrap() {
             await orderService.processOrder(order.id);
         });
 
-        const server = app.listen(config.port)
+        const server = app.listen(config.port);
 
         const shutdown = async () => {
             server.close();
             await rabbitMQService.close();
             await db.close();
-        }
+        };
+        console.log("Server started");
 
         process.on('SIGINT', shutdown);
         process.on('SIGTERM', shutdown);
     } catch (error) {
-        process.exit(1)
+        process.exit(1);
     }
 }
 

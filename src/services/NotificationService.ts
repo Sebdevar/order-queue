@@ -1,4 +1,4 @@
-import { Order } from 'models/orders';
+import { Order } from '../models/orders';
 
 class NotificationService {
     private readonly notificationUrl: string;

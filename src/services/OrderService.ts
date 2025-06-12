@@ -1,5 +1,5 @@
-import OrderRepository from 'database/orderRepository';
-import { Order, OrderStatus } from 'models/orders';
+import OrderRepository from '../database/orderRepository';
+import { Order, OrderStatus } from '../models/orders';
 import NotificationService from './NotificationService';
 
 class OrderService {
@@ -11,7 +11,7 @@ class OrderService {
         this.notificationService = notificationService;
     }
 
-    async createOrder(data: Order): Promise<Order> {
+    async createOrder(data: any): Promise<Order> {
         return await this.orderRepository.createOrder(data)
     }
 

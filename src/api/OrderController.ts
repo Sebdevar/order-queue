@@ -1,6 +1,6 @@
-import { Router, Request, Response } from 'express';
-import OrderService from 'services/OrderService';
-import RabbitMQService from 'queue/RabbitMQService';
+import { Request, Response, Router } from 'express';
+import OrderService from '../services/OrderService';
+import RabbitMQService from '../services/RabbitMQService';
 
 class OrderController {
     private orderService: OrderService;
@@ -14,6 +14,10 @@ class OrderController {
         this.setRoutes();
     }
 
+    getRouter() {
+        return this.router;
+    }
+
     private async createOrder(request: Request, response: Response) {
         try {
             const orderData = request.body;
@@ -24,16 +28,13 @@ class OrderController {
                 orderId: order.id
             }).send();
         } catch (error) {
-            response.status(500).json({ error: 'Failed to create order' }).send();
+            response.status(500).json({error: 'Failed to create order'}).send();
         }
     }
 
     private setRoutes() {
-        this.router.get('/', this.createOrder);
-    }
-
-    getRouter() {
-        return this.router;
+        this.router.post('/', (request, response) =>
+            this.createOrder(request, response));
     }
 }
 
