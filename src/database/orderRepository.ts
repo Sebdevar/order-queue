@@ -1,11 +1,10 @@
 import { Order, OrderStatus } from '../models/orders';
-import db from './clientPool'
-import { loadSqlQuery } from './sqlLoader';
+import db from './clientPool';
 
 class OrderRepository {
     async createOrder(data: any): Promise<Order> {
         try {
-            const result = await db.query(loadSqlQuery('createNewOrders.sql'), [data]);
+            const result = await db.query("INSERT INTO orders (data) VALUES($1) RETURNING *", [data]);
             return result.rows[0];
         } catch (error) {
             throw error;
@@ -14,8 +13,8 @@ class OrderRepository {
 
     async getOrderById(orderId: number): Promise<Order> {
         try {
-            const result = await db.query(loadSqlQuery('getOrderById.sql'), [orderId]);
-            return result.rows[0]
+            const result = await db.query("SELECT * FROM orders WHERE id = $1", [orderId]);
+            return result.rows[0];
         } catch (error) {
             throw error;
         }
@@ -23,8 +22,8 @@ class OrderRepository {
 
     async updateOrderStatus(orderId: number, status: OrderStatus): Promise<Order> {
         try {
-            const result = await db.query(loadSqlQuery('updateOrderById.sql'), [orderId, status]);
-            return result.rows[0]
+            const result = await db.query("UPDATE orders SET status = $2 WHERE id = $1 RETURNING *", [orderId, status]);
+            return result.rows[0];
         } catch (error) {
             throw error;
         }
