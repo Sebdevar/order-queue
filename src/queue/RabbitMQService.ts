@@ -1,4 +1,5 @@
 import amqp, { Channel, ChannelModel } from 'amqplib';
+import { Order } from '../models/orders';
 
 class RabbitMQService {
     private connection: ChannelModel | null = null;
@@ -40,20 +41,20 @@ class RabbitMQService {
         }
     }
 
-    async consumeOrders(callback: (orderData: any) => Promise<void>): Promise<void> {
+    async consumeOrders(callback: (order: Order) => Promise<void>): Promise<void> {
         if (!this.channel) {
             throw new Error('RabbitMQ channel is not established');
         }
 
         try {
-            await this.channel.consume(this.queueName, async (msg: any) => {
-                if (msg) {
-                    const orderData = JSON.parse(msg.content.toString());
+            await this.channel.consume(this.queueName, async (message: any) => {
+                if (message) {
+                    const orderData = JSON.parse(message.content.toString());
                     try {
                         await callback(orderData);
-                        this.channel?.ack(msg);
+                        this.channel?.ack(message);
                     } catch (error) {
-                        this.channel?.nack(msg, false, true);
+                        this.channel?.nack(message, false, true);
                     }
                 }
             });
