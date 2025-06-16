@@ -55,7 +55,7 @@ kubectl get svc
 ```
 Look for the external IP.
 
-You can now create orders via `<eternal-ip>:80/api/orders`. Any json object passed via the body will be recorded in the database.
+You can now create orders via `<external-ip>:80/api/orders`. Any json object passed via the body will be recorded in the database.
 
 ### Notifications?
 To pass a URL for the notifications to be sent to, change the value of `NOTIFICATION_URL` in values.yaml. A notification will be sent once an order has been processed.
