@@ -8,8 +8,6 @@ image:
 service:
   type: LoadBalancer
   port: 80
-  annotations:
-    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
 
 resources:
   limits:
