@@ -1,19 +1,15 @@
 replicaCount: 1
 
 image:
-  repository: order-queue
+  repository: ghcr.io/sebdevar/order-queue
   pullPolicy: IfNotPresent
-
-serviceAccount:
-  create: true
+  tag: "1.0.0"
 
 service:
-  type: ClusterIP
+  type: LoadBalancer
   port: 80
-  targetPort: 3000
-
-ingress:
-  enabled: false
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
 
 resources:
   limits:
@@ -23,30 +19,25 @@ resources:
     cpu: 100m
     memory: 256Mi
 
-autoscaling:
-  enabled: true
-  minReplicas: 1
-  maxReplicas: 5
-  targetCPUUtilizationPercentage: 80
-
-app:
-  port: 3000
-
-rabbitmq:
-  enabled: true
-  auth:
-    username: guest
-    password: guest
-  service:
-    port: 5672
+env:
+  NODE_ENV: production
+  PORT: 3000
 
 postgresql:
   enabled: true
   auth:
-    username: "dbUser"
-    password: "12345"
-    database: "orders"
-  primary:
-    persistence:
-      enabled: true
-      size: 5Gi
+    username: postgres
+    password: postgres
+    database: orderqueue
+  service:
+    ports:
+      postgresql: 5432
+
+rabbitmq:
+  enabled: true
+  auth:
+    username: user
+    password: password
+  service:
+    ports:
+      amqp: 5672
