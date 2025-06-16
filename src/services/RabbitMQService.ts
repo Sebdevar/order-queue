@@ -51,7 +51,7 @@ class RabbitMQService {
                 if (message) {
                     const orderData = JSON.parse(message.content.toString());
                     try {
-                        await callback(orderData);
+                        callback(orderData);
                         this.channel?.ack(message);
                     } catch (error) {
                         this.channel?.nack(message, false, true);

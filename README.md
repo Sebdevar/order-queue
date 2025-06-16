@@ -11,12 +11,6 @@ Given the scope of the case, I decided to pass on setting up a testing environme
 ### Why no ORM?
 I lack knowledge of node ORMs and wanted to reduce the scope of extra things to learn, so I went straight to .sql files instead... until I ran into a "compile" issue that refused to transfer the files, so I reverted to SQL strings.
 
-### Helm chart status
-I haven't completed the deployment part with helm charts, and this is something I am currently learning to develop, so my knowledge in that area is limited.
-
-### Final note
-While this developer case is far from complete, I believe it is sufficient to provide an idea of my development process. I value a clean and readable code above all, this also shows in my commit history that will provide you good insights on my development flow.
-
 # To run locally
 Note that the following commands include customizable configurations, notably the database user & password. 
 When changing any of these, make sure to also pass them to the order-queue image.
@@ -43,3 +37,25 @@ You can now create orders via `localhost:3000/api/orders`. Any json object passe
 ### Notifications?
 The notification Url can be changed by passing the NOTIFICATION_URL environment variable to the docker run command (use -e). 
 The application will then attempt to send notifications of process completion to that URL.
+
+# To run in a Kubernetes Cluster
+The helm chart included with the project is ready for deployment. However, certain annotations may be required for deployment to specific Cloud solutions.
+
+If needed, add the annotations required to the values.yaml file, when trying to install, helm will generally tell you which annotations are missing.
+
+To install, run the following from the root of the repository:
+```shell
+helm install order-queue ./helm
+```
+
+### Creating orders
+First fetch the ip of the application:
+```shell
+kubectl get svc
+```
+Look for the external IP.
+
+You can now create orders via `<eternal-ip>:80/api/orders`. Any json object passed via the body will be recorded in the database.
+
+### Notifications?
+To pass a URL for the notifications to be sent to, change the value of `NOTIFICATION_URL` in values.yaml. A notification will be sent once an order has been processed.

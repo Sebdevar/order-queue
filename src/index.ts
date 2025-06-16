@@ -28,6 +28,7 @@ async function bootstrap() {
 
         const orderController = new OrderController(orderService, rabbitMQService);
         app.use('/api/orders', orderController.getRouter());
+        process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = String(0) // TODO: Remove if using in production
 
         rabbitMQService.consumeOrders(async (order) => {
             await orderService.processOrder(order.id);

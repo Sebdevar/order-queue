@@ -20,6 +20,7 @@ resources:
 env:
   NODE_ENV: production
   PORT: 3000
+  NOTIFICATION_URL: http://ptsv3.com/t/order-queue/post
 
 postgresql:
   enabled: true
